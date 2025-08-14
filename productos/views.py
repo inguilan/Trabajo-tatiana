@@ -1,11 +1,13 @@
 from django.shortcuts import render
-
+from rest_framework import permissions
 from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Producto, Categoria
 from .serializers import ProductoSerializer, CategoriaSerializer
-
 from django_filters.rest_framework import DjangoFilterBackend
+from .models import Carrito, CarritoItem
+from .serializers import CarritoSerializer, CarritoItemSerializer
+
 
 class ProductoViewSet(viewsets.ModelViewSet):
     serializer_class = ProductoSerializer
@@ -22,4 +24,20 @@ class ProductoViewSet(viewsets.ModelViewSet):
 class CategoriaViewSet(viewsets.ModelViewSet):
     queryset = Categoria.objects.all()
     serializer_class = CategoriaSerializer
+
+class CarritoViewSet(viewsets.ModelViewSet):
+    queryset = Carrito.objects.all()
+    serializer_class = CarritoSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Carrito.objects.filter(usuario=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(usuario=self.request.user)
+
+class CarritoItemViewSet(viewsets.ModelViewSet):
+    queryset = CarritoItem.objects.all()
+    serializer_class = CarritoItemSerializer
+    permission_classes = [permissions.IsAuthenticated]
 

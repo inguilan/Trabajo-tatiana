@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Product } from "@/types"
-import { ProductCard } from "./product-card"
+  import { ProductCard } from "./product-card"
 
 
 export interface Product {

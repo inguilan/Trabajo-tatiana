@@ -132,3 +132,23 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True  # Solo en desarrollo
+
+Todo esto toca instalar antes de 
+
+pip install django
+python -m venv env
+env\Scripts\activate
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
+pip install djangorestframework
+pip install django-cors-headers
+pip install django-filter
+pip install Pillow
+
+instalar antes de 
+
+frone
+npm install
+npm run dev
