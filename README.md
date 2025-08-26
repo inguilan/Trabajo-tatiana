@@ -147,8 +147,7 @@ pip install django-cors-headers
 pip install django-filter
 pip install Pillow
 
-instalar antes de 
-
+instalar antes de instalar
 frone
 npm install
 npm run dev
