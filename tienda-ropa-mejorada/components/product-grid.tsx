@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
@@ -22,10 +22,11 @@ export function ProductGrid({ products }: { products: Product[] }) {
 
   const sortedProducts = [...products].sort(() => 0)
 
+  // Función para manejar la URL de la imagen
   const imageUrl = (src: string) => (src?.startsWith("/") ? `http://localhost:8000${src}` : src || "/placeholder.svg")
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {sortedProducts.map((product) => (
         <div key={product.id} className="bg-white rounded shadow overflow-hidden group">
           <Link href={`/productos/${product.id}`}>

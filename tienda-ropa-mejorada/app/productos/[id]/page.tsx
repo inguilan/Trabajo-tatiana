@@ -7,7 +7,6 @@ import { Separator } from '@/components/ui/separator'
 import { useCart } from '@/hooks/use-cart'
 import { useWishlist } from '@/hooks/use-wishlist'
 import { ArrowLeft, Heart, RotateCcw, Shield, ShoppingBag, Star, Truck } from 'lucide-react'
-import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 

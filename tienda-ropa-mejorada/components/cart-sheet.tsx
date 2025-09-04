@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { useCart } from "@/hooks/use-cart"
 import { Minus, Plus, Trash2 } from "lucide-react"
-import Image from "next/image"
 import Link from "next/link"
 
 export function CartSheet({ children }: { children: React.ReactNode }) {
