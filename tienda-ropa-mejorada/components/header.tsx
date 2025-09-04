@@ -1,22 +1,23 @@
 "use client"
 
-import { useState } from "react"
-import { Search, ShoppingBag, Heart, User, Menu } from "lucide-react"
+import { CartSheet } from "@/components/cart-sheet"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { CartSheet } from "@/components/cart-sheet"
 import { WishlistSheet } from "@/components/wishlist-sheet"
-import { AdminPanel } from "@/components/admin-panel"
+import { useAuth } from "@/context/AuthContext"
 import { useCart } from "@/hooks/use-cart"
 import { useWishlist } from "@/hooks/use-wishlist"
+import { Heart, Menu, Search, Settings, ShoppingBag, User } from "lucide-react"
+import Link from "next/link"
+import { useState } from "react"
 
 export function Header() {
   const [searchQuery, setSearchQuery] = useState("")
-  const [showAdmin, setShowAdmin] = useState(false)
   const { items: cartItems } = useCart()
   const { items: wishlistItems } = useWishlist()
+  const { user } = useAuth()
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
@@ -90,7 +91,13 @@ export function Header() {
               </Button>
             </CartSheet>
 
-            <Button variant="ghost" size="icon" onClick={() => setShowAdmin(!showAdmin)}>
+            <Link href="/admin">
+              <Button variant="ghost" size="icon" title="Panel Administrativo">
+                <Settings className="h-5 w-5" />
+              </Button>
+            </Link>
+            
+            <Button variant="ghost" size="icon">
               <User className="h-5 w-5" />
             </Button>
           </div>
@@ -110,7 +117,6 @@ export function Header() {
         </div>
       </div>
 
-      {showAdmin && <AdminPanel />}
     </header>
   )
 }

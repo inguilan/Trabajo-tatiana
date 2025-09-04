@@ -1,10 +1,10 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { FilterSidebar } from "@/components/filter-sidebar"
 import { Header } from "@/components/header"
 import { ProductGrid } from "@/components/product-grid"
-import { FilterSidebar } from "@/components/filter-sidebar"
 import { ProductGridSkeleton } from "@/components/product-grid-skeleton"
+import { useEffect, useState } from "react"
 
 interface RawProduct {
   id: number
@@ -22,16 +22,12 @@ export default function HomePage() {
   const [filters, setFilters] = useState({
     categories: [] as number[],
     sizes: [] as string[],
-    colors: [] as string[],
-    priceRange: [0, 500000],
   })
 
   // Esta función recibe los filtros del sidebar
   const handleFiltersChange = (newFilters: {
     categories: number[]
     sizes: string[]
-    colors: string[]
-    priceRange: number[]
   }) => {
     setFilters(newFilters)
   }
@@ -52,15 +48,12 @@ export default function HomePage() {
           categoria: item.categoria,
         }))
 
-        // Filtrado básico en el frontend (opcional, hasta que el backend lo maneje)
+        // Filtrado en el frontend
         formattedProducts = formattedProducts.filter((p) => {
           const inCategory =
             filters.categories.length === 0 ||
             filters.categories.includes(Number(p.categoria))
-          const inPrice =
-            p.precio >= filters.priceRange[0] &&
-            p.precio <= filters.priceRange[1]
-          return inCategory && inPrice
+          return inCategory
         })
 
         setProducts(formattedProducts)
@@ -80,13 +73,23 @@ export default function HomePage() {
       <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           <aside className="lg:w-80">
-            <FilterSidebar onFiltersChange={handleFiltersChange} /> {/* ✅ Aquí pasamos la función */}
+            <FilterSidebar onFiltersChange={handleFiltersChange} />
           </aside>
           <div className="flex-1">
             {loading ? (
               <ProductGridSkeleton />
             ) : (
-              <ProductGrid products={products} />
+              <div>
+                <div className="mb-6">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                    Productos
+                  </h2>
+                  <p className="text-gray-600">
+                    {products.length} {products.length === 1 ? 'producto encontrado' : 'productos encontrados'}
+                  </p>
+                </div>
+                <ProductGrid products={products} />
+              </div>
             )}
           </div>
         </div>

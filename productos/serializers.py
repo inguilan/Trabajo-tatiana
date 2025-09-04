@@ -15,12 +15,14 @@ class ProductoSerializer(serializers.ModelSerializer):
 
 class CarritoItemSerializer(serializers.ModelSerializer):
     producto = serializers.PrimaryKeyRelatedField(queryset=Producto.objects.all())
+
     class Meta:
         model = CarritoItem
         fields = ['id', 'producto', 'cantidad']
 
 class CarritoSerializer(serializers.ModelSerializer):
     items = CarritoItemSerializer(many=True, read_only=True)
+
     class Meta:
         model = Carrito
         fields = ['id', 'usuario', 'creado', 'items']

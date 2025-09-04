@@ -1,16 +1,23 @@
-"use client"
+'use client'  // Asegúrate de que este archivo se trate como un componente de cliente
 
-import type React from "react"
-
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
-import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Trash2, Plus, Minus } from "lucide-react"
-import Image from "next/image"
+import { Button } from "@/components/ui/button"
+import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { useCart } from "@/hooks/use-cart"
+import { Minus, Plus, Trash2 } from "lucide-react"
+import Image from "next/image"
+import Link from "next/link"
 
 export function CartSheet({ children }: { children: React.ReactNode }) {
   const { items, removeItem, updateQuantity, total } = useCart()
+
+  // Función para obtener la URL de la imagen correctamente
+  const getImageUrl = (image: string | null) => {
+    if (!image || image.trim() === '') {
+      return '/placeholder.svg' // Imagen de reserva si la URL de la imagen es inválida o vacía
+    }
+    return `http://localhost:8000${image}` // URL completa con el prefijo si la imagen es válida
+  }
 
   return (
     <Sheet>
@@ -36,19 +43,17 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
               <div className="flex-1 overflow-y-auto py-6">
                 <div className="space-y-4">
                   {items.map((item) => (
-                    <div key={`${item.id}-${item.size}-${item.color}`} className="flex gap-4">
-                      <div className="relative w-16 h-16 rounded-md overflow-hidden">
-                        <Image src={item.image || "/placeholder.svg"} alt={item.name} fill className="object-cover" />
-                      </div>
+                    <div key={item.id} className="flex gap-4">
+                      
 
                       <div className="flex-1 space-y-2">
                         <h4 className="font-medium text-sm leading-tight">{item.name}</h4>
-                        {(item.size || item.color) && (
-                          <div className="flex gap-2 text-xs text-gray-500">
-                            {item.size && <span>Talla: {item.size}</span>}
-                            {item.color && <span>Color: {item.color}</span>}
-                          </div>
-                        )}
+                        <div className="text-xs text-gray-500">
+                          <span>Precio unitario: ${item.price.toLocaleString()}</span>
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          <span>Subtotal: ${(item.price * item.quantity).toLocaleString()}</span>
+                        </div>
 
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
@@ -97,13 +102,13 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
                   <span className="text-xl font-bold text-rose-600">${total.toLocaleString()}</span>
                 </div>
 
-                <Button className="w-full bg-rose-600 hover:bg-rose-700" size="lg">
-                  Proceder al pago
-                </Button>
-
-                <Button variant="outline" className="w-full">
-                  Ver carrito completo
-                </Button>
+                <SheetFooter>
+                  <Link href="/carrito" className="w-full">
+                    <Button className="w-full bg-rose-600 hover:bg-rose-700" size="lg">
+                      Ver carrito completo
+                    </Button>
+                  </Link>
+                </SheetFooter>
               </div>
             </>
           )}

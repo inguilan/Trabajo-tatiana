@@ -28,12 +28,12 @@ export const useCart = create<CartStore>()(
       items: [],
       addItem: (item) => {
         const items = get().items
-        const existingItem = items.find((i) => i.id === item.id && i.size === item.size && i.color === item.color)
+        const existingItem = items.find((i) => i.id === item.id)
 
         if (existingItem) {
           set({
             items: items.map((i) =>
-              i.id === item.id && i.size === item.size && i.color === item.color
+              i.id === item.id
                 ? { ...i, quantity: i.quantity + (item.quantity || 1) }
                 : i,
             ),

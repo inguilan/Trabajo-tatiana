@@ -151,3 +151,4 @@ instalar antes de instalar
 frone
 npm install
 npm run dev
+npm install @radix-ui/react-dialog

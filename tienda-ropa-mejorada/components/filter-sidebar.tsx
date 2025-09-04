@@ -1,13 +1,12 @@
 "use client"
 
-import { useState, useEffect } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Separator } from "@/components/ui/separator"
-import { Slider } from "@/components/ui/slider"
 import { Filter, X } from "lucide-react"
+import { useEffect, useState } from "react"
 
 interface Categoria {
   id: number
@@ -18,8 +17,6 @@ interface FilterSidebarProps {
   onFiltersChange: (filters: {
     categories: number[]
     sizes: string[]
-    colors: string[]
-    priceRange: number[]
   }) => void
 }
 
@@ -27,8 +24,6 @@ export function FilterSidebar({ onFiltersChange }: FilterSidebarProps) {
   const [categories, setCategories] = useState<Categoria[]>([])
   const [selectedCategories, setSelectedCategories] = useState<number[]>([])
   const [selectedSizes, setSelectedSizes] = useState<string[]>([])
-  const [selectedColors, setSelectedColors] = useState<string[]>([])
-  const [priceRange, setPriceRange] = useState([0, 500000])
 
   // Cargar categorías desde el backend
   useEffect(() => {
@@ -49,11 +44,9 @@ export function FilterSidebar({ onFiltersChange }: FilterSidebarProps) {
   useEffect(() => {
     onFiltersChange({
       categories: selectedCategories,
-      sizes: selectedSizes,
-      colors: selectedColors,
-      priceRange
+      sizes: selectedSizes
     })
-  }, [selectedCategories, selectedSizes, selectedColors, priceRange])
+  }, [selectedCategories, selectedSizes])
 
   const toggleCategory = (categoryId: number) => {
     setSelectedCategories(prev =>
@@ -67,21 +60,13 @@ export function FilterSidebar({ onFiltersChange }: FilterSidebarProps) {
     )
   }
 
-  const toggleColor = (color: string) => {
-    setSelectedColors(prev =>
-      prev.includes(color) ? prev.filter(c => c !== color) : [...prev, color]
-    )
-  }
-
   const clearFilters = () => {
     setSelectedCategories([])
     setSelectedSizes([])
-    setSelectedColors([])
-    setPriceRange([0, 500000])
   }
 
   const activeFiltersCount =
-    selectedCategories.length + selectedSizes.length + selectedColors.length
+    selectedCategories.length + selectedSizes.length
 
   return (
     <Card className="sticky top-24">
@@ -126,26 +111,6 @@ export function FilterSidebar({ onFiltersChange }: FilterSidebarProps) {
 
         <Separator />
 
-        {/* Precio */}
-        <div>
-          <h3 className="font-medium mb-3">Precio</h3>
-          <div className="px-2">
-            <Slider
-              value={priceRange}
-              onValueChange={setPriceRange}
-              max={500000}
-              step={10000}
-              className="w-full"
-            />
-            <div className="flex justify-between text-sm text-gray-500 mt-2">
-              <span>${priceRange[0].toLocaleString()}</span>
-              <span>${priceRange[1].toLocaleString()}</span>
-            </div>
-          </div>
-        </div>
-
-        <Separator />
-
         {/* Tallas */}
         <div>
           <h3 className="font-medium mb-3">Tallas</h3>
@@ -160,37 +125,6 @@ export function FilterSidebar({ onFiltersChange }: FilterSidebarProps) {
               >
                 {size}
               </Button>
-            ))}
-          </div>
-        </div>
-
-        <Separator />
-
-        {/* Colores */}
-        <div>
-          <h3 className="font-medium mb-3">Colores</h3>
-          <div className="grid grid-cols-4 gap-2">
-            {[
-              { name: "Negro", value: "#000000" },
-              { name: "Blanco", value: "#FFFFFF" },
-              { name: "Rosa", value: "#EC4899" },
-              { name: "Azul", value: "#3B82F6" },
-              { name: "Verde", value: "#10B981" },
-              { name: "Rojo", value: "#EF4444" },
-              { name: "Amarillo", value: "#F59E0B" },
-              { name: "Morado", value: "#8B5CF6" }
-            ].map(color => (
-              <button
-                key={color.name}
-                onClick={() => toggleColor(color.name)}
-                className={`w-8 h-8 rounded-full border-2 ${
-                  selectedColors.includes(color.name)
-                    ? "border-gray-800 scale-110"
-                    : "border-gray-300"
-                } transition-all duration-200`}
-                style={{ backgroundColor: color.value }}
-                title={color.name}
-              />
             ))}
           </div>
         </div>
