@@ -51,14 +51,14 @@ export function Header() {
               </SheetContent>
             </Sheet>
 
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent">
-              Tienda Tatiana 👗
+            <h1 className="text-2xl font-bold text-black">
+              ENSHERRY 👗
             </h1>
           </div>
 
           <div className="hidden md:flex flex-1 max-w-md mx-8">
             <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black-400 h-4 w-4" />
               <Input
                 placeholder="Buscar productos..."
                 value={searchQuery}

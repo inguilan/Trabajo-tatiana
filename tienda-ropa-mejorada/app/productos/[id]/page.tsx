@@ -97,6 +97,7 @@ export default function ProductDetailPage() {
         name: product.nombre,
         price: product.precio,
         image: product.imagen,
+        
       })
     }
   }
@@ -116,6 +117,12 @@ export default function ProductDetailPage() {
     { name: "Gris", value: "#6B7280" },
     { name: "Beige", value: "#D2B48C" }
   ]
+
+  // Función para manejar la URL de la imagen
+  const imageUrl = (src: string) => {
+    // Si la imagen es relativa, añade la URL del servidor
+    return src?.startsWith("/") ? `http://localhost:8000${src}` : src || "/placeholder.svg"
+  }
 
   if (loading) {
     return (
@@ -174,7 +181,13 @@ export default function ProductDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Imagen del producto */}
           <div className="space-y-4">
-            
+            {product.imagen && (
+              <img
+                src={imageUrl(product.imagen)}  // Asegúrate de que esta URL esté correctamente construida
+                alt={product.nombre}
+                className="w-full h-auto object-cover rounded-lg"
+              />
+            )}
           </div>
 
           {/* Información del producto */}
@@ -189,8 +202,10 @@ export default function ProductDetailPage() {
                 )}
               </div>
               
+
               <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.nombre}</h1>
               
+
               <div className="flex items-center gap-2 mb-4">
                 <div className="flex items-center">
                   {[...Array(5)].map((_, i) => (
@@ -200,6 +215,7 @@ export default function ProductDetailPage() {
                 <span className="text-sm text-gray-600">(4.8) • 124 reseñas</span>
               </div>
               
+
               <div className="text-3xl font-bold text-rose-600 mb-4">
                 ${product.precio.toLocaleString()}
               </div>

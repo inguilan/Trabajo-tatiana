@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
@@ -44,23 +44,20 @@ export function AdminDashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [showAddProduct, setShowAddProduct] = useState(false)
+  const [showEditProduct, setShowEditProduct] = useState(false)
   const [showAddCategory, setShowAddCategory] = useState(false)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
-  const [editingCategory, setEditingCategory] = useState<Category | null>(null)
-
-  // Formulario para nuevo producto
   const [newProduct, setNewProduct] = useState({
     nombre: '',
     descripcion: '',
     precio: '',
     categoria: '',
     tallas_disponibles: '',
-    publicado: true
+    publicado: true,
+    imagen: null, // Campo para la imagen
   })
-
-  // Formulario para nueva categoría
   const [newCategory, setNewCategory] = useState({
-    nombre: ''
+    nombre: '',
   })
 
   useEffect(() => {
@@ -104,10 +101,13 @@ export function AdminDashboard() {
       formData.append('categoria', newProduct.categoria)
       formData.append('tallas_disponibles', newProduct.tallas_disponibles)
       formData.append('publicado', newProduct.publicado.toString())
+      if (newProduct.imagen) {
+        formData.append('imagen', newProduct.imagen) // Agregar la imagen al FormData
+      }
 
       const response = await fetch('http://localhost:8000/api/productos/', {
         method: 'POST',
-        body: formData
+        body: formData,
       })
 
       if (response.ok) {
@@ -118,7 +118,8 @@ export function AdminDashboard() {
           precio: '',
           categoria: '',
           tallas_disponibles: '',
-          publicado: true
+          publicado: true,
+          imagen: null,
         })
         fetchData()
       } else {
@@ -126,26 +127,50 @@ export function AdminDashboard() {
       }
     } catch (err) {
       setError('Error al crear el producto')
+      console.error(err)
     }
   }
 
-  const toggleProductStatus = async (productId: number, currentStatus: boolean) => {
-    try {
-      const response = await fetch(`http://localhost:8000/api/productos/${productId}/`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ publicado: !currentStatus })
-      })
+  const handleEditProduct = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (editingProduct) {
+      try {
+        const formData = new FormData()
+        formData.append('nombre', newProduct.nombre)
+        formData.append('descripcion', newProduct.descripcion)
+        formData.append('precio', newProduct.precio)
+        formData.append('categoria', newProduct.categoria)
+        formData.append('tallas_disponibles', newProduct.tallas_disponibles)
+        formData.append('publicado', newProduct.publicado.toString())
+        if (newProduct.imagen) {
+          formData.append('imagen', newProduct.imagen)
+        }
 
-      if (response.ok) {
-        fetchData()
-      } else {
+        const response = await fetch(`http://localhost:8000/api/productos/${editingProduct.id}/`, {
+          method: 'PUT',
+          body: formData,
+        })
+
+        if (response.ok) {
+          setShowEditProduct(false)
+          setEditingProduct(null)
+          setNewProduct({
+            nombre: '',
+            descripcion: '',
+            precio: '',
+            categoria: '',
+            tallas_disponibles: '',
+            publicado: true,
+            imagen: null,
+          })
+          fetchData()
+        } else {
+          setError('Error al actualizar el producto')
+        }
+      } catch (err) {
         setError('Error al actualizar el producto')
+        console.error(err)
       }
-    } catch (err) {
-      setError('Error al actualizar el producto')
     }
   }
 
@@ -169,29 +194,6 @@ export function AdminDashboard() {
     }
   }
 
-  const handleAddCategory = async (e: React.FormEvent) => {
-    e.preventDefault()
-    try {
-      const response = await fetch('http://localhost:8000/api/categorias/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newCategory)
-      })
-
-      if (response.ok) {
-        setShowAddCategory(false)
-        setNewCategory({ nombre: '' })
-        fetchData()
-      } else {
-        setError('Error al crear la categoría')
-      }
-    } catch (err) {
-      setError('Error al crear la categoría')
-    }
-  }
-
   const deleteCategory = async (categoryId: number) => {
     if (!confirm('¿Estás seguro de que quieres eliminar esta categoría?')) {
       return
@@ -212,6 +214,10 @@ export function AdminDashboard() {
     }
   }
 
+  const imageUrl = (src: string) => {
+    return src?.startsWith("/") ? `http://localhost:8000${src}` : src || "/placeholder.svg"
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -221,6 +227,10 @@ export function AdminDashboard() {
         </div>
       </div>
     )
+  }
+
+  function handleAddCategory(event: FormEvent<HTMLFormElement>): void {
+    throw new Error('Function not implemented.')
   }
 
   return (
@@ -248,48 +258,6 @@ export function AdminDashboard() {
           </Alert>
         )}
 
-        {/* Estadísticas */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Productos</CardTitle>
-              <Package className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{products.length}</div>
-              <p className="text-xs text-muted-foreground">
-                {products.filter(p => p.publicado).length} publicados
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Categorías</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{categories.length}</div>
-              <p className="text-xs text-muted-foreground">
-                Categorías activas
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Productos Ocultos</CardTitle>
-              <EyeOff className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{products.filter(p => !p.publicado).length}</div>
-              <p className="text-xs text-muted-foreground">
-                No publicados
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-
         {/* Gestión de Categorías */}
         <Card className="mb-8">
           <CardHeader>
@@ -297,32 +265,31 @@ export function AdminDashboard() {
               <div>
                 <CardTitle>Gestión de Categorías</CardTitle>
                 <CardDescription>
-                  Administra las categorías de productos
+                  Administra las categorías de tu tienda
                 </CardDescription>
               </div>
               <Dialog open={showAddCategory} onOpenChange={setShowAddCategory}>
                 <DialogTrigger asChild>
-                  <Button variant="outline">
+                  <Button className="bg-rose-600 hover:bg-rose-700">
                     <Plus className="h-4 w-4 mr-2" />
                     Agregar Categoría
                   </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="max-w-md">
                   <DialogHeader>
                     <DialogTitle>Agregar Nueva Categoría</DialogTitle>
                     <DialogDescription>
-                      Crea una nueva categoría para organizar tus productos
+                      Completa la información de la nueva categoría
                     </DialogDescription>
                   </DialogHeader>
                   <form onSubmit={handleAddCategory} className="space-y-4">
                     <div>
-                      <Label htmlFor="categoryName">Nombre de la categoría</Label>
+                      <Label htmlFor="nombre">Nombre</Label>
                       <Input
-                        id="categoryName"
+                        id="nombre"
                         value={newCategory.nombre}
-                        onChange={(e) => setNewCategory({...newCategory, nombre: e.target.value})}
+                        onChange={(e) => setNewCategory({ nombre: e.target.value })}
                         required
-                        placeholder="Ej: Vestidos, Blusas, Pantalones..."
                       />
                     </div>
                     <div className="flex justify-end space-x-2">
@@ -339,22 +306,25 @@ export function AdminDashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="space-y-4">
               {categories.map((category) => (
-                <div key={category.id} className="flex items-center justify-between p-3 border rounded-lg">
-                  <span className="font-medium">{category.nombre}</span>
+                <div key={category.id} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div>
+                    <h3 className="font-semibold">{category.nombre}</h3>
+                  </div>
                   <Button
-                    variant="ghost"
                     size="sm"
+                    variant="outline"
                     onClick={() => deleteCategory(category.id)}
-                    className="text-red-500 hover:text-red-700"
+                    className="text-red-600 hover:text-red-700"
+                    title="Eliminar categoría"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
               ))}
               {categories.length === 0 && (
-                <div className="col-span-full text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-gray-500">
                   No hay categorías registradas
                 </div>
               )}
@@ -446,6 +416,15 @@ export function AdminDashboard() {
                         />
                       </div>
                     </div>
+
+                    <div>
+                      <Label htmlFor="imagen">Imagen</Label>
+                      <Input
+                        id="imagen"
+                        type="file"
+                        onChange={(e) => setNewProduct({...newProduct, imagen: e.target.files?.[0] || null})}
+                      />
+                    </div>
                     
                     <div className="flex justify-end space-x-2">
                       <Button type="button" variant="outline" onClick={() => setShowAddProduct(false)}>
@@ -468,7 +447,7 @@ export function AdminDashboard() {
                     <div className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center">
                       {product.imagen ? (
                         <img 
-                          src={`http://localhost:8000${product.imagen}`} 
+                          src={imageUrl(product.imagen)} 
                           alt={product.nombre}
                           className="w-full h-full object-cover rounded-lg"
                         />
@@ -484,34 +463,32 @@ export function AdminDashboard() {
                       </p>
                     </div>
                   </div>
-                  
-                                      <div className="flex items-center space-x-2">
-                      <Badge variant={product.publicado ? "default" : "secondary"}>
-                        {product.publicado ? "Publicado" : "Oculto"}
-                      </Badge>
-                      
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => toggleProductStatus(product.id, product.publicado)}
-                        title={product.publicado ? "Ocultar producto" : "Mostrar producto"}
-                      >
-                        {product.publicado ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </Button>
-                      
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => deleteProduct(product.id)}
-                        className="text-red-600 hover:text-red-700"
-                        title="Eliminar producto"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                  <div className="flex items-center space-x-2">
+                    <Badge variant={product.publicado ? "default" : "secondary"}>
+                      {product.publicado ? "Publicado" : "Oculto"}
+                    </Badge>
+                    
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => toggleProductStatus(product.id, product.publicado)}
+                      title={product.publicado ? "Ocultar producto" : "Mostrar producto"}
+                    >
+                      {product.publicado ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                    
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => deleteProduct(product.id)}
+                      className="text-red-600 hover:text-red-700"
+                      title="Eliminar producto"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               ))}
-              
               {products.length === 0 && (
                 <div className="text-center py-8 text-gray-500">
                   No hay productos registrados

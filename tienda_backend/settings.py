@@ -139,6 +139,9 @@ STATIC_URL = 'static/'
 # Media files (para imágenes de productos)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+import os
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # CORS
 CORS_ALLOW_ALL_ORIGINS = True  # Solo para desarrollo

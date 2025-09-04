@@ -8,7 +8,7 @@ import "./globals.css"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Tienda Tatiana - Moda Femenina",
+  title: "ENsherry",
   description: "Descubre la mejor moda femenina con estilo único y calidad excepcional",
     generator: 'v0.dev'
 }

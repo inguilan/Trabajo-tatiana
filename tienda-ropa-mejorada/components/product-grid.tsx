@@ -23,7 +23,10 @@ export function ProductGrid({ products }: { products: Product[] }) {
   const sortedProducts = [...products].sort(() => 0)
 
   // Función para manejar la URL de la imagen
-  const imageUrl = (src: string) => (src?.startsWith("/") ? `http://localhost:8000${src}` : src || "/placeholder.svg")
+  const imageUrl = (src: string) => {
+    // Si la imagen es relativa, añade la URL del servidor
+    return src?.startsWith("/") ? `http://localhost:8000${src}` : src || "/placeholder.svg"
+  }
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -38,7 +41,7 @@ export function ProductGrid({ products }: { products: Product[] }) {
                 className="object-cover group-hover:scale-105 transition-transform"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
-                  target.src = '/placeholder.svg';
+                  target.src = '/placeholder.svg';  // En caso de error, mostrar la imagen de reserva
                 }}
               />
             </div>

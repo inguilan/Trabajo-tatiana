@@ -36,6 +36,7 @@ export default function HomePage() {
     const fetchProducts = async () => {
       try {
         const res = await fetch("http://localhost:8000/api/productos/")
+        console.log(res)
         if (!res.ok) throw new Error("Error fetching products")
         const data: RawProduct[] = await res.json()
 
