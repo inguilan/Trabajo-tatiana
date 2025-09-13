@@ -11,11 +11,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-CORS_ALLOW_ALL_ORIGINS = True  # Para desarrollo. Luego se puede limitar.
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -26,7 +25,7 @@ SECRET_KEY = 'django-insecure-x2lfuny&3cu81k_^l^tg)7+gmo24u9a(bcc$p^lwmst097k!p8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]  # Solo para desarrollo
 
 
 # Application definition
@@ -137,11 +136,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATIC_URL = 'static/'
 
 # Media files (para imágenes de productos)
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
-import os
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-# CORS
-CORS_ALLOW_ALL_ORIGINS = True  # Solo para desarrollo
+
+# corsheaders ya instalado y añadido en INSTALLED_APPS y MIDDLEWARE
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
+from corsheaders.defaults import default_headers
+CORS_ALLOW_HEADERS = list(default_headers) + ["authorization"]

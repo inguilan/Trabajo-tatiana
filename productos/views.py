@@ -1,6 +1,7 @@
 from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Producto, Categoria, Carrito, CarritoItem
 from .serializers import ProductoSerializer, CategoriaSerializer, CarritoSerializer, CarritoItemSerializer
@@ -20,6 +21,7 @@ class ProductoFilter(django_filters.FilterSet):
 
 class ProductoViewSet(viewsets.ModelViewSet):
     serializer_class = ProductoSerializer
+    parser_classes = [MultiPartParser, FormParser, JSONParser]  # <- permitir uploads multipart
     filter_backends = [DjangoFilterBackend]
     filterset_class = ProductoFilter  # Aplica el filtro personalizado
 

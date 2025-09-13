@@ -9,17 +9,17 @@ class CategoriaSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ProductoSerializer(serializers.ModelSerializer):
-    # Cambiar 'image' por 'imagen' para que coincida con el modelo
-    imagen = serializers.SerializerMethodField()
+    imagen = serializers.ImageField(required=False, allow_null=True)
+    imagen_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Producto
         fields = '__all__'
 
-    def get_imagen(self, obj):
-        # Ahora usamos 'imagen' en lugar de 'image'
-        if obj.imagen:
-            return self.context['request'].build_absolute_uri(obj.imagen.url)
+    def get_imagen_url(self, obj):
+        req = self.context.get('request')
+        if obj.imagen and hasattr(obj.imagen, 'url'):
+            return req.build_absolute_uri(obj.imagen.url) if req else obj.imagen.url
         return None
 
 class CarritoItemSerializer(serializers.ModelSerializer):
