@@ -146,6 +146,7 @@ pip install djangorestframework
 pip install django-cors-headers
 pip install django-filter
 pip install Pillow
+python manage.py collectstatic --noinput
 
 instalar antes de instalar
 frone

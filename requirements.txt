@@ -9,4 +9,3 @@ django_filters
 # opcional para S3:
 # django-storages[boto3]
 # boto3pip install -r requirements.txt
-python manage.py collectstatic --noinput
