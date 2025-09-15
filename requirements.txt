@@ -5,5 +5,8 @@ whitenoise
 dj-database-url
 django-cors-headers
 Pillow
-django-storages[boto3]  # solo si usarás S3 para media
-boto3                    # solo si usarás S3
+django_filters
+# opcional para S3:
+# django-storages[boto3]
+# boto3pip install -r requirements.txt
+python manage.py collectstatic --noinput
