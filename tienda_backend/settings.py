@@ -10,22 +10,22 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
-from pathlib import Path
 import os
+from pathlib import Path
+import dj_database_url
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-x2lfuny&3cu81k_^l^tg)7+gmo24u9a(bcc$p^lwmst097k!p8'
+SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = ["*"]  # Solo para desarrollo
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "*").split(",")  # Solo para desarrollo
 
 
 # Application definition
@@ -50,8 +50,9 @@ REST_FRAMEWORK = {
 }
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
+    "corsheaders.middleware.CorsMiddleware",         # antes de CommonMiddleware
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",    # servir static con whitenoise
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -85,10 +86,7 @@ WSGI_APPLICATION = 'tienda_backend.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    "default": dj_database_url.parse(os.environ.get("DATABASE_URL", f"sqlite:///{BASE_DIR / 'db.sqlite3'}"))
 }
 
 
@@ -126,22 +124,17 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-# Static files (CSS, JavaScript, Images)
-STATIC_URL = 'static/'
+# WhiteNoise optimizaciones
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Media files (para imágenes de productos)
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # corsheaders ya instalado y añadido en INSTALLED_APPS y MIDDLEWARE
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
-from corsheaders.defaults import default_headers
-CORS_ALLOW_HEADERS = list(default_headers) + ["authorization"]
+CORS_ALLOWED_ORIGINS = os.environ.get("CORS_ALLOWED_ORIGINS", "http://localhost:3000").split(",")

@@ -1,0 +1,9 @@
+Django>=4.2
+djangorestframework
+gunicorn
+whitenoise
+dj-database-url
+django-cors-headers
+Pillow
+django-storages[boto3]  # solo si usarás S3 para media
+boto3                    # solo si usarás S3
