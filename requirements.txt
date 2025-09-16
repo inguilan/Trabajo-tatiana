@@ -5,7 +5,7 @@ whitenoise
 dj-database-url
 django-cors-headers
 Pillow
-django_filters
+django-filter
 # opcional para S3:
 # django-storages[boto3]
-# boto3pip install -r requirements.txt
+# boto3
